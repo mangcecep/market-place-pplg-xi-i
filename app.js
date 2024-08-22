@@ -1,3 +1,5 @@
+let cartData = []
+
 const products = [
     {
         id: 1,
@@ -28,12 +30,13 @@ const products = [
     },
 ]
 
-const rupiah = (number)=>{
+const cart = document.getElementById("cart")
+const rupiah = (number) => {
     return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR"
+        style: "currency",
+        currency: "IDR"
     }).format(number);
-  }
+}
 
 
 const listProduct = products?.map((product) => `<div class="col-lg-3">
@@ -45,10 +48,19 @@ const listProduct = products?.map((product) => `<div class="col-lg-3">
                         <p class="card-text">${product.description}</p>
                         <p class="card-text">Stock: ${product.stock}</p>
                         <p class="card-text">Price: ${product.price}</p>
-                        <a href="#" class="btn btn-success">Add To Chart</a>
+                        <button type="button" class="btn btn-success" onclick="addToCart(${product.id})">Add To Chart</button>
                     </div>
                 </div>
-            </div>`).join(",").replace(",", "")
+            </div>`).join(",").replaceAll(",", " ")
 
 const productsId = document.getElementById('products')
 productsId.innerHTML = listProduct
+cart.innerHTML = cartData.length
+
+function addToCart(id) {
+    alert('Barang sudah asupkeun ka kranjang')
+    let filterBarang = products?.filter(product => product.id === id)
+    filterBarang.map(f => cartData.push(f))
+    console.log(`button difilter by ID: ${JSON.stringify(cartData)}`)
+    cart.innerHTML = cartData.length
+}
