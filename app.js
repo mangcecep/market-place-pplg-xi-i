@@ -33,10 +33,8 @@ const listProduct = products?.map((product) => `<div class="col-lg-3">
                     <img src="${product.img_url}" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title">${product.products_name}</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of
-                            the
-                            card's content.</p>
-                        <a href="#" class="btn-warna">Go somewhere</a>
+                        <p class="card-text">${product.description}</p>
+                        <a href="#" class="btn btn-success">Go somewhere</a>
                     </div>
                 </div>
             </div>`).join(",").replace(",", "")
