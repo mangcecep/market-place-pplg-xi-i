@@ -28,12 +28,20 @@ const products = [
     },
 ]
 
+const rupiah = (number)=>{
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR"
+    }).format(number);
+  }
+
+
 const listProduct = products?.map((product) => `<div class="col-lg-3">
                 <div class="card" style="width: 18rem;">
                     <img src="${product.img_url}" class="card-img-top" alt="...">
                     <div class="card-body">
-                        <h4 class="card-title">${product.products_name}</h4>
-                        <h5 class="card-title">${product.type}</h5>
+                        <h5 class="card-title">${product.products_name}</h5>
+                        <h6 class="card-title">Price: ${rupiah(product.price)}</h6>
                         <p class="card-text">${product.description}</p>
                         <p class="card-text">Stock: ${product.stock}</p>
                         <p class="card-text">Price: ${product.price}</p>
