@@ -35,9 +35,9 @@ const productsId = document.getElementById('products')
 const cart = document.getElementById("cart")
 const detailOrders = document.getElementById("detail-orders")
 const listOrders = document.getElementById("list-orders")
-const cartCetailOrdersView = document.getElementById('cart-detail-orders-view')
+const cartDetailOrdersView = document.getElementById('cart-detail-orders-view')
 
-cartCetailOrdersView.addEventListener('click', function () {
+cartDetailOrdersView.addEventListener('click', function () {
     console.log('cart di pencet')
     let total = 0
 
