@@ -122,7 +122,11 @@ function addToCart(id) {
     const stockZero = products?.filter(product => product.id === id).some(data => data.stock === 0)
 
     if (stockZero) {
-        alert('Produk ini sudah dipindahkan kedalam keranjang semua / kosong!')
+        swal({
+            title: "Stock habis!",
+            text: "Produk ini sudah dipindahkan kedalam keranjang semua / kosong!",
+            icon: "warning",
+        });
         return
     }
 
