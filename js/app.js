@@ -1,6 +1,7 @@
 let cartData = []
 let cartInit = 0
 
+
 let products = [
     {
         id: 1,
@@ -31,6 +32,8 @@ let products = [
     },
 ]
 
+const newProducts = localStorage.getItem('products')
+
 const productsId = document.getElementById('products')
 const cart = document.getElementById("cart")
 const detailOrders = document.getElementById("detail-orders")
@@ -38,11 +41,9 @@ const listOrders = document.getElementById("list-orders")
 const cartDetailOrdersView = document.getElementById('cart-detail-orders-view')
 
 cartDetailOrdersView.addEventListener('click', function () {
-    console.log('cart di pencet')
+
     let total = 0
 
-    productsId.classList.add("d-none")
-    detailOrders.classList.remove("d-none")
     if (cartData.length === 0) {
         listOrders.innerHTML = `<h1 class="text-danger text-center">Product Has Not added to cart!</h1>`
         return
@@ -101,21 +102,32 @@ function backToListProduct() {
     detailOrders.classList.add("d-none")
 }
 
-const listProduct = products?.map((product) => `<div class="col-lg-4">
-                <div class="card" style="width: 18rem;">
-                    <img src="${product.img_url}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">${product.products_name}</h5>
-                        <h6 class="card-title">Price: ${rupiah(product.price)}</h6>
-                        <p class="card-text">${product.description}</p>
-                        <p class="card-text">Stock: ${product.stock}</p>
-                        <button type="button" class="btn btn-success" onclick="addToCart(${product.id})">Add To Chart</button>
-                    </div>
+const listProduct = !!newProducts ? JSON.parse(newProducts).map((product) => `<div class="col-lg-4">
+<div class="card" style="width: 18rem;">
+    <img src="${product.img_url}" class="card-img-top" alt="...">
+    <div class="card-body">
+        <h5 class="card-title">${product.products_name}</h5>
+        <h6 class="card-title">Price: ${rupiah(product.price)}</h6>
+        <p class="card-text">${product.description}</p>
+        <p class="card-text">Stock: ${product.stock}</p>
+        <button type="button" class="btn btn-success" onclick="addToCart(${product.id})">Add To Chart</button>
+    </div>
+</div>
+</div>`).join(",").replaceAll(",", " ") : products.map((product) => `<div class="col-lg-4">
+            <div class="card" style="width: 18rem;">
+                <img src="${product.img_url}" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">${product.products_name}</h5>
+                    <h6 class="card-title">Price: ${rupiah(product.price)}</h6>
+                    <p class="card-text">${product.description}</p>
+                    <p class="card-text">Stock: ${product.stock}</p>
+                    <button type="button" class="btn btn-success" onclick="addToCart(${product.id})">Add To Chart</button>
                 </div>
-            </div>`).join(",").replaceAll(",", " ")
+            </div>
+        </div>`).join(",").replaceAll(",", " ")
 
 productsId.innerHTML = listProduct
-cart.innerHTML = cartInit
+cart.innerHTML = localStorage.getItem('qty') ?? 0;
 
 function addToCart(id) {
     // check stock masih ada
@@ -139,8 +151,18 @@ function addToCart(id) {
     updateChartStock(id)
 }
 
-function updateChartStock(id) {
-    let newTotalProduct = products.map(p => {
+async function updateChartStock(id) {
+    let newTotalProduct = !!newProducts ? JSON.parse(newProducts).map(p => {
+        if (p.id === id) {
+            return {
+                ...p,
+                stock: p.stock - 1
+            }
+        }
+        return {
+            ...p
+        }
+    }) : products.map(p => {
         if (p.id === id) {
             return {
                 ...p,
@@ -153,8 +175,20 @@ function updateChartStock(id) {
     })
 
     products = newTotalProduct
-
-    const listProductNew = products?.map((product) => `<div class="col-lg-4">
+    localStorage.setItem('products', JSON.stringify(newTotalProduct))
+    let newProductsUpdate = localStorage.getItem('products')
+    let listProductNew = !!newProductsUpdate ? JSON.parse(newProductsUpdate).map((product) => `<div class="col-lg-4">
+    <div class="card" style="width: 18rem;">
+        <img src="${product.img_url}" class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">${product.products_name}</h5>
+            <h6 class="card-title">Price: ${rupiah(product.price)}</h6>
+            <p class="card-text">${product.description}</p>
+            <p class="card-text">Stock: ${product.stock}</p>
+            <button type="button" class="btn btn-success" onclick="addToCart(${product.id})">Add To Chart</button>
+        </div>
+    </div>
+</div>`).join(",").replaceAll(",", " ") : products?.map((product) => `<div class="col-lg-4">
                 <div class="card" style="width: 18rem;">
                     <img src="${product.img_url}" class="card-img-top" alt="...">
                     <div class="card-body">
@@ -174,16 +208,22 @@ function updateChartStock(id) {
 function stockOfCart(filterBarang, id) {
     const isAvailable = cartData.some(data => data.id === id)
     cartInit++
-    cart.innerHTML = cartInit;
+
+    localStorage.setItem('qty', cartInit)
+    cart.innerHTML = localStorage.getItem('qty');
 
     if (isAvailable) {
+
         cartData.map(c => ({
             ...c,
             stock: c?.id === id ? c.stock++ : c.stock
         }))
 
+        localStorage.setItem('list_product', JSON.stringify(cartData))
+
         return
     }
     let newCartData = cartData.length === 0 ? filterBarang : filterBarang.concat(cartData)
     cartData = newCartData
+    localStorage.setItem('list_product', JSON.stringify(cartData))
 }
